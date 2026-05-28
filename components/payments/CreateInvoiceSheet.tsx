@@ -1,12 +1,12 @@
-'use client';
+'use client'
 
-import { useState, type FormEvent } from 'react';
-import { Plus } from 'lucide-react';
-import { toast } from 'sonner';
+import { useState, type FormEvent } from 'react'
+import { Plus } from 'lucide-react'
+import { toast } from 'sonner'
 
-import { Button } from '@/components/custom/Button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/components/common/Button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Sheet,
   SheetContent,
@@ -14,59 +14,65 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
+} from '@/components/ui/sheet'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useCreateInvoiceMutation, useProjectsQuery, useUsersQuery } from '@/services';
+} from '@/components/ui/select'
+import {
+  useCreateInvoiceMutation,
+  useProjectsQuery,
+  useUsersQuery,
+} from '@/services'
 
 function toCents(value: string) {
-  const amount = Number(value || '0');
+  const amount = Number(value || '0')
   if (Number.isNaN(amount) || amount <= 0) {
-    return 0;
+    return 0
   }
-  return Math.round(amount * 100);
+  return Math.round(amount * 100)
 }
 
 export function CreateInvoiceSheet() {
-  const [open, setOpen] = useState(false);
-  const [projectId, setProjectId] = useState('');
-  const [clientId, setClientId] = useState('');
+  const [open, setOpen] = useState(false)
+  const [projectId, setProjectId] = useState('')
+  const [clientId, setClientId] = useState('')
 
-  const { data: projects = [] } = useProjectsQuery({ page: 1, limit: 100 });
+  const { data: projects = [] } = useProjectsQuery({ page: 1, limit: 100 })
   const { data: clientsResponse } = useUsersQuery({
     page: 1,
     limit: 100,
     role: 'CLIENT',
     includeInactive: false,
-  });
+  })
 
-  const clients = clientsResponse?.data ?? [];
+  const clients = clientsResponse?.data ?? []
 
   const createInvoiceMutation = useCreateInvoiceMutation({
     onSuccess: () => {
-      setOpen(false);
-      setProjectId('');
-      setClientId('');
-      toast.success('Invoice created.');
+      setOpen(false)
+      setProjectId('')
+      setClientId('')
+      toast.success('Invoice created.')
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : 'Failed to create invoice.');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to create invoice.'
+      )
     },
-  });
+  })
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
 
-    const amountCents = toCents(String(formData.get('amount') ?? '0'));
+    const amountCents = toCents(String(formData.get('amount') ?? '0'))
     if (!projectId || !clientId || amountCents <= 0) {
-      toast.error('Project, client, and valid amount are required.');
-      return;
+      toast.error('Project, client, and valid amount are required.')
+      return
     }
 
     createInvoiceMutation.mutate({
@@ -76,23 +82,23 @@ export function CreateInvoiceSheet() {
       currency: String(formData.get('currency') ?? 'BDT'),
       dueDate: String(formData.get('dueDate') ?? '') || undefined,
       description: String(formData.get('description') ?? '') || undefined,
-    });
-  };
+    })
+  }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button color="cyan">
-          <Button.Icon>
-            <Plus className="h-4 w-4" />
-          </Button.Icon>
-          <Button.Label>New Invoice</Button.Label>
+        <Button>
+          <Plus className="h-4 w-4" />
+          New Invoice
         </Button>
       </SheetTrigger>
       <SheetContent className="sm:max-w-140">
         <SheetHeader>
           <SheetTitle>Create Invoice</SheetTitle>
-          <SheetDescription>Create a new project invoice and track payment status.</SheetDescription>
+          <SheetDescription>
+            Create a new project invoice and track payment status.
+          </SheetDescription>
         </SheetHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-6">
@@ -131,11 +137,24 @@ export function CreateInvoiceSheet() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="amount">Amount</Label>
-              <Input id="amount" name="amount" type="number" min={0} step="0.01" required />
+              <Input
+                id="amount"
+                name="amount"
+                type="number"
+                min={0}
+                step="0.01"
+                required
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="currency">Currency</Label>
-              <Input id="currency" name="currency" defaultValue="BDT" maxLength={3} required />
+              <Input
+                id="currency"
+                name="currency"
+                defaultValue="BDT"
+                maxLength={3}
+                required
+              />
             </div>
           </div>
 
@@ -146,17 +165,20 @@ export function CreateInvoiceSheet() {
 
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
-            <Input id="description" name="description" placeholder="Invoice details (optional)" />
+            <Input
+              id="description"
+              name="description"
+              placeholder="Invoice details (optional)"
+            />
           </div>
 
           <div className="flex justify-end pt-2">
-            <Button type="submit" color="pink" isLoading={createInvoiceMutation.isPending}>
-              <Button.Spinner />
-              <Button.Label>Create Invoice</Button.Label>
+            <Button type="submit" isLoading={createInvoiceMutation.isPending}>
+              Create Invoice
             </Button>
           </div>
         </form>
       </SheetContent>
     </Sheet>
-  );
+  )
 }

@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react'
 
 import {
   Select,
@@ -8,48 +8,63 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/custom/Button';
-import { useActivityLogsQuery, useProfileQuery, useUsersQuery } from '@/services';
+} from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/common/Button'
+import {
+  useActivityLogsQuery,
+  useProfileQuery,
+  useUsersQuery,
+} from '@/services'
 
-const ENTITY_TYPES = ['ALL', 'project', 'payment', 'task', 'user', 'auth'] as const;
+const ENTITY_TYPES = [
+  'ALL',
+  'project',
+  'payment',
+  'task',
+  'user',
+  'auth',
+] as const
 
-type EntityTypeFilter = (typeof ENTITY_TYPES)[number];
+type EntityTypeFilter = (typeof ENTITY_TYPES)[number]
 
 function formatMeta(meta: Record<string, unknown> | null) {
-  if (!meta) {
-    return '-';
-  }
-
+  if (!meta) return '-'
   try {
-    return JSON.stringify(meta);
+    return JSON.stringify(meta)
   } catch {
-    return '[unserializable meta]';
+    return '[unserializable meta]'
   }
 }
 
 export default function ActivityPage() {
-  const { data: currentUser, isLoading: profileLoading, isError: profileError } = useProfileQuery();
+  const {
+    data: currentUser,
+    isLoading: profileLoading,
+    isError: profileError,
+  } = useProfileQuery()
 
-  const [page, setPage] = useState(1);
-  const [entityType, setEntityType] = useState<EntityTypeFilter>('ALL');
-  const [actorId, setActorId] = useState('ALL');
-  const [entityId, setEntityId] = useState('');
+  const [page, setPage] = useState(1)
+  const [entityType, setEntityType] = useState<EntityTypeFilter>('ALL')
+  const [actorId, setActorId] = useState('ALL')
+  const [entityId, setEntityId] = useState('')
 
   const queryEntityType = useMemo(
     () => (entityType === 'ALL' ? undefined : entityType),
     [entityType]
-  );
-  const queryActorId = useMemo(() => (actorId === 'ALL' ? undefined : actorId), [actorId]);
+  )
+  const queryActorId = useMemo(
+    () => (actorId === 'ALL' ? undefined : actorId),
+    [actorId]
+  )
 
   const { data: usersResponse } = useUsersQuery({
     page: 1,
     limit: 100,
     includeInactive: true,
-  });
+  })
 
-  const users = usersResponse?.data ?? [];
+  const users = usersResponse?.data ?? []
 
   const { data, isLoading, isError } = useActivityLogsQuery({
     page,
@@ -57,41 +72,51 @@ export default function ActivityPage() {
     entityType: queryEntityType,
     actorId: queryActorId,
     entityId: entityId.trim() || undefined,
-  });
+  })
 
   if (profileLoading) {
-    return <div className="text-sm text-muted-foreground">Checking access...</div>;
+    return (
+      <div className="text-sm text-muted-foreground">Checking access...</div>
+    )
   }
 
   if (profileError) {
-    return <div className="text-sm text-destructive">Failed to verify access.</div>;
+    return (
+      <div className="text-sm text-destructive">Failed to verify access.</div>
+    )
   }
 
   if (currentUser?.role !== 'ADMIN') {
     return (
       <div className="space-y-3">
-        <h2 className="text-2xl font-semibold tracking-tight">Access Restricted</h2>
-        <p className="text-muted-foreground">Only administrators can access activity logs.</p>
+        <h2 className="text-2xl font-semibold tracking-tight">
+          Access Restricted
+        </h2>
+        <p className="text-muted-foreground">
+          Only administrators can access activity logs.
+        </p>
       </div>
-    );
+    )
   }
 
-  const logs = data?.data ?? [];
-  const totalPages = data?.meta.totalPages ?? 1;
+  const logs = data?.data ?? []
+  const totalPages = data?.meta.totalPages ?? 1
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">Activity Logs</h2>
-        <p className="text-muted-foreground">Audit timeline of system changes.</p>
+        <p className="text-muted-foreground">
+          Audit timeline of system changes.
+        </p>
       </div>
 
       <div className="grid gap-3 md:grid-cols-4">
         <Select
           value={entityType}
           onValueChange={(value) => {
-            setPage(1);
-            setEntityType(value as EntityTypeFilter);
+            setPage(1)
+            setEntityType(value as EntityTypeFilter)
           }}
         >
           <SelectTrigger>
@@ -109,8 +134,8 @@ export default function ActivityPage() {
         <Select
           value={actorId}
           onValueChange={(value) => {
-            setPage(1);
-            setActorId(value);
+            setPage(1)
+            setActorId(value)
           }}
         >
           <SelectTrigger>
@@ -129,32 +154,37 @@ export default function ActivityPage() {
         <Input
           value={entityId}
           onChange={(event) => {
-            setPage(1);
-            setEntityId(event.target.value);
+            setPage(1)
+            setEntityId(event.target.value)
           }}
           placeholder="Filter by entity ID"
         />
 
         <Button
-          color="cyan"
           variant="ghost"
           onClick={() => {
-            setPage(1);
-            setEntityType('ALL');
-            setActorId('ALL');
-            setEntityId('');
+            setPage(1)
+            setEntityType('ALL')
+            setActorId('ALL')
+            setEntityId('')
           }}
         >
-          <Button.Label>Reset Filters</Button.Label>
+          Reset Filters
         </Button>
       </div>
 
       {isLoading ? (
-        <div className="text-sm text-muted-foreground">Loading activity logs...</div>
+        <div className="text-sm text-muted-foreground">
+          Loading activity logs...
+        </div>
       ) : isError ? (
-        <div className="text-sm text-destructive">Failed to load activity logs.</div>
+        <div className="text-sm text-destructive">
+          Failed to load activity logs.
+        </div>
       ) : logs.length === 0 ? (
-        <div className="text-sm text-muted-foreground">No activity logs found for current filters.</div>
+        <div className="text-sm text-muted-foreground">
+          No activity logs found for current filters.
+        </div>
       ) : (
         <div className="overflow-x-auto border border-border">
           <table className="w-full min-w-200 text-sm">
@@ -174,11 +204,16 @@ export default function ActivityPage() {
                   <td className="px-4 py-3 whitespace-nowrap">
                     {new Date(log.createdAt).toLocaleString()}
                   </td>
-                  <td className="px-4 py-3">{log.actorName || log.actorId || '-'}</td>
+                  <td className="px-4 py-3">
+                    {log.actorName || log.actorId || '-'}
+                  </td>
                   <td className="px-4 py-3">{log.action}</td>
                   <td className="px-4 py-3">{log.entityType || '-'}</td>
                   <td className="px-4 py-3">{log.entityId || '-'}</td>
-                  <td className="px-4 py-3 max-w-120 truncate" title={formatMeta(log.meta)}>
+                  <td
+                    className="px-4 py-3 max-w-120 truncate"
+                    title={formatMeta(log.meta)}
+                  >
                     {formatMeta(log.meta)}
                   </td>
                 </tr>
@@ -194,25 +229,25 @@ export default function ActivityPage() {
         </p>
         <div className="flex gap-2">
           <Button
-            color="cyan"
             variant="ghost"
             size="sm"
             disabled={page <= 1}
             onClick={() => setPage((current) => Math.max(1, current - 1))}
           >
-            <Button.Label>Previous</Button.Label>
+            Previous
           </Button>
           <Button
-            color="cyan"
             variant="ghost"
             size="sm"
             disabled={page >= totalPages}
-            onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+            onClick={() =>
+              setPage((current) => Math.min(totalPages, current + 1))
+            }
           >
-            <Button.Label>Next</Button.Label>
+            Next
           </Button>
         </div>
       </div>
     </div>
-  );
+  )
 }

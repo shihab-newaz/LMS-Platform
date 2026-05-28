@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Syne, Space_Mono } from 'next/font/google'
+import { Inter, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import ClientProviders from '../components/providers/ClientProviders'
 import { initMSW } from '../lib/msw'
@@ -9,12 +9,12 @@ if (typeof window !== 'undefined') {
   initMSW()
 }
 
-const syne = Syne({
-  variable: '--font-display',
+const inter = Inter({
+  variable: '--font-sans',
   subsets: ['latin'],
 })
 
-const spaceMono = Space_Mono({
+const geistMono = Geist_Mono({
   variable: '--font-mono',
   weight: ['400', '700'],
   subsets: ['latin'],
@@ -22,8 +22,7 @@ const spaceMono = Space_Mono({
 
 export const metadata: Metadata = {
   title: 'ARCHI.FLOW - Architect Project Management',
-  description:
-    'Premium project management tool for architects.',
+  description: 'Premium project management tool for architects.',
 }
 
 export default function RootLayout({
@@ -32,10 +31,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${syne.variable} ${spaceMono.variable} antialiased font-mono`}
-      >
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body className={`${inter.variable} ${geistMono.variable} antialiased`}>
         <ClientProviders>{children}</ClientProviders>
       </body>
     </html>

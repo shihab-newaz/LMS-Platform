@@ -17,7 +17,7 @@ import React, { useState, useRef, useCallback } from 'react'
 import { useDebounce, useThrottle } from '../hooks'
 import { ButtonProps } from '../types'
 import { ButtonContext } from '../context/ButtonContext'
-import styles from '../css/Button.module.css'
+import styles from '../styles/Button.module.css'
 
 export const ButtonRoot = React.forwardRef<HTMLButtonElement, ButtonProps>(function ButtonRoot(
     {

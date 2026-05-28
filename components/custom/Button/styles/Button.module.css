@@ -1,0 +1,447 @@
+/* --- CSS CUSTOM PROPERTIES --- */
+.button {
+  --glow-color: rgba(94, 106, 210, 0.4);
+  --accent-color: #5e6ad2;
+  --accent-dark: #4a56c4;
+  --text-color: #f7f8f8;
+  --bg-gradient-start: #141516;
+  --bg-gradient-end: #0f1011;
+}
+
+.button.pink {
+  --glow-color: rgba(94, 106, 210, 0.4);
+  --accent-color: #828fff;
+  --accent-dark: #5e6ad2;
+}
+
+.button.emerald {
+  --glow-color: rgba(39, 166, 68, 0.4);
+  --accent-color: #27a644;
+  --accent-dark: #1e8a37;
+}
+
+.button.danger {
+  --glow-color: rgba(255, 0, 51, 0.4);
+  --accent-color: #ff0033;
+  --accent-dark: #cc0029;
+}
+
+/* --- THE CYBER BUTTON CSS --- */
+.button {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+
+  position: relative;
+  display: inline-block;
+  min-width: 160px;
+  height: 64px;
+
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* === 3D PSEUDO-ELEMENT AMBIENT GLOW === */
+.button::before {
+  content: '';
+  position: absolute;
+  inset: 8px -4px -12px -4px;
+  z-index: -1;
+  background: radial-gradient(
+    ellipse at center,
+    var(--glow-color) 0%,
+    transparent 70%
+  );
+  filter: blur(16px);
+  opacity: 0;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+  transform: translateY(8px) scaleY(0.5);
+}
+
+.button:hover::before {
+  opacity: 0.6;
+  transform: translateY(12px) scaleY(0.7);
+}
+
+.button.glowStrong:hover::before {
+  opacity: 1;
+  filter: blur(24px);
+}
+
+.button.glowNone::before {
+  display: none;
+}
+
+/* === SIZE VARIANTS === */
+.button.sm {
+  min-width: 120px;
+  height: 48px;
+  font-size: 0.875rem;
+}
+
+.button.lg {
+  min-width: 200px;
+  height: 72px;
+  font-size: 1.25rem;
+}
+
+/* === VARIANT: GHOST === */
+.button.ghost .base {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.button.ghost .cap {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.button.ghost:hover .cap {
+  border-color: var(--accent-color);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.button.ghost .base {
+  transform: translateY(0);
+}
+
+.button.ghost:active .cap {
+  transform: translateY(2px);
+}
+
+/* === VARIANT: SECONDARY === */
+.button.secondary .cap {
+  background: linear-gradient(
+    180deg,
+    rgba(20, 21, 22, 0.8) 0%,
+    rgba(15, 16, 17, 0.8) 100%
+  );
+}
+
+.button.secondary .base {
+  box-shadow:
+    0 0 0 2px #0a0b0c,
+    0 8px 16px -4px rgba(0, 0, 0, 0.4);
+}
+
+/* === STATE: DISABLED === */
+.button:disabled,
+.button.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  filter: grayscale(0.5);
+}
+
+/* === STATE: LOADING === */
+.button.loading {
+  pointer-events: none;
+}
+
+.button.loading .cap {
+  color: transparent;
+}
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--accent-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  z-index: 20;
+}
+
+@keyframes spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* === STATE: ERROR === */
+.button.error {
+  animation: shake 0.4s ease;
+}
+
+.button.error .cap {
+  border-color: #ff0033 !important;
+}
+
+.button.error::before {
+  --glow-color: rgba(255, 0, 51, 0.6);
+  opacity: 0.8;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20% {
+    transform: translateX(-4px);
+  }
+
+  40% {
+    transform: translateX(4px);
+  }
+
+  60% {
+    transform: translateX(-4px);
+  }
+
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+/* === STATE: SUCCESS === */
+.button.success .cap {
+  border-color: #27a644 !important;
+}
+
+.button.success::before {
+  --glow-color: rgba(39, 166, 68, 0.6);
+  opacity: 0.8;
+  animation: successPulse 0.6s ease;
+}
+
+@keyframes successPulse {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.8);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(12px) scale(1.1);
+  }
+
+  100% {
+    opacity: 0.8;
+    transform: translateY(12px) scale(1);
+  }
+}
+
+/* === LAYER 1: THE BASE === */
+.base {
+  position: absolute;
+  inset: 0;
+  background-color: #0a0b0c;
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 2px rgba(10, 11, 12, 1),
+    0 10px 20px -5px rgba(0, 0, 0, 0.5);
+  transform: translateY(8px);
+  z-index: 0;
+}
+
+.button.cyan .base {
+  box-shadow:
+    0 0 0 2px #0a0b0c,
+    0 0 20px rgba(94, 106, 210, 0.2),
+    0 15px 25px -5px rgba(0, 0, 0, 0.8);
+}
+
+.button.pink .base {
+  box-shadow:
+    0 0 0 2px #0a0b0c,
+    0 0 20px rgba(130, 143, 255, 0.2),
+    0 15px 25px -5px rgba(0, 0, 0, 0.8);
+}
+
+.button.emerald .base {
+  box-shadow:
+    0 0 0 2px #0a0b0c,
+    0 0 20px rgba(39, 166, 68, 0.2),
+    0 15px 25px -5px rgba(0, 0, 0, 0.8);
+}
+
+/* === LAYER 2: THE CAP === */
+.cap {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  background: linear-gradient(
+    180deg,
+    var(--bg-gradient-start) 0%,
+    var(--bg-gradient-end) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 4px solid var(--accent-dark);
+
+  color: var(--text-color);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-size: 1.1rem;
+
+  transform: translateY(0);
+  transition:
+    transform 0.1s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s ease;
+
+  overflow: hidden;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+.button:active .cap {
+  transform: translateY(6px);
+  border-bottom-width: 0px;
+  transition: transform 0.05s ease-out;
+}
+
+/* === CORNER MARKERS === */
+.cornerMarker {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.topLeft {
+  top: 6px;
+  left: 6px;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.topRight {
+  top: 6px;
+  right: 6px;
+  border-left: 0;
+  border-bottom: 0;
+}
+
+.bottomLeft {
+  bottom: 6px;
+  left: 6px;
+  border-right: 0;
+  border-top: 0;
+}
+
+.bottomRight {
+  bottom: 6px;
+  right: 6px;
+  border-left: 0;
+  border-top: 0;
+}
+
+.button:hover .cornerMarker {
+  width: 10px;
+  height: 10px;
+  border-color: var(--accent-color);
+}
+
+/* === SHIMMER ANIMATION === */
+.shimmerLayer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0) 20%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 80%,
+    transparent 100%
+  );
+  transform: skewX(-25deg);
+  pointer-events: none;
+}
+
+.animateGlint {
+  animation: glintAnim 0.6s ease-out forwards;
+}
+
+@keyframes glintAnim {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    left: 200%;
+    opacity: 0;
+  }
+}
+
+/* === SHORTCUT BADGE === */
+.shortcutBadge {
+  position: absolute;
+  right: 8px;
+  bottom: 4px;
+  font-size: 0.5rem;
+  opacity: 0.5;
+  font-weight: 400;
+}
+
+/* === CONTENT WRAPPER === */
+.content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition:
+    color 0.3s ease,
+    opacity 0.2s ease;
+}
+
+.content.iconRight {
+  flex-direction: row-reverse;
+}
+
+.button:hover .content {
+  color: var(--accent-color);
+}
+
+.button.loading .content {
+  opacity: 0;
+}
+
+/* === LOADING TEXT === */
+.loadingText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  color: var(--accent-color);
+  white-space: nowrap;
+}

@@ -6,7 +6,7 @@
 'use client'
 
 import React from 'react'
-import styles from '../css/Button.module.css'
+import styles from '../styles/Button.module.css'
 
 interface ButtonShortcutProps extends React.HTMLAttributes<HTMLSpanElement> {
     children: React.ReactNode

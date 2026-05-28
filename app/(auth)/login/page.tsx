@@ -3,14 +3,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Github, ShieldCheck, UserPlus } from 'lucide-react'
 import { AuthShell } from '@/components/custom/AuthShell'
-import { Button } from '@/components/custom/Button'
-import { ThemeToggle } from '@/components/custom/ThemeToggle'
+import { Button } from '@/components/common/Button'
 import { LoginForm } from '@/modules/auth/components/LoginForm'
 
 export const metadata: Metadata = {
   title: 'Sign in | Archi.Flow',
-  description:
-    'Access your architectural project management dashboard.',
+  description: 'Access your architectural project management dashboard.',
 }
 
 const LoginPage = () => {
@@ -48,19 +46,15 @@ const LoginPage = () => {
         </div>
       }
     >
-      <div className="flex items-center justify-end">
-        <ThemeToggle />
-      </div>
-
       <div className="grid gap-4">
         <div className="grid gap-3">
-          <Button color="pink" className="w-full">
-            <Button.Icon><Github className="h-4 w-4" /></Button.Icon>
-            <Button.Label>GitHub</Button.Label>
+          <Button variant="secondary" className="w-full">
+            <Github className="h-4 w-4" />
+            GitHub
           </Button>
-          <Button color="cyan" className="w-full">
-            <Button.Icon><UserPlus className="h-4 w-4" /></Button.Icon>
-            <Button.Label>SSO</Button.Label>
+          <Button variant="secondary" className="w-full">
+            <UserPlus className="h-4 w-4" />
+            SSO
           </Button>
         </div>
 

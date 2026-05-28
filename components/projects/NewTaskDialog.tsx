@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/components/custom/Button'
+import { Button } from '@/components/common/Button'
 import {
   Dialog,
   DialogContent,
@@ -21,7 +21,11 @@ import {
 } from '@/components/ui/select'
 import { Plus } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
-import { useCreateTaskMutation, type TaskStatus, useUsersQuery } from '@/services'
+import {
+  useCreateTaskMutation,
+  type TaskStatus,
+  useUsersQuery,
+} from '@/services'
 import { toast } from 'sonner'
 
 interface NewTaskDialogProps {
@@ -36,7 +40,11 @@ export function NewTaskDialog({
   trigger,
 }: NewTaskDialogProps) {
   const [open, setOpen] = useState(false)
-  const { data: usersResponse } = useUsersQuery({ page: 1, limit: 100, includeInactive: false })
+  const { data: usersResponse } = useUsersQuery({
+    page: 1,
+    limit: 100,
+    includeInactive: false,
+  })
   const users = usersResponse?.data ?? []
 
   const createTaskMutation = useCreateTaskMutation({
@@ -52,38 +60,27 @@ export function NewTaskDialog({
     },
   })
 
-  function onSubmit(formData: FormData) {
-    const title = formData.get('title') as string
-    const description = formData.get('description') as string
-    const dueDate = formData.get('dueDate') as string
-    const assignedTo = formData.get('assignedTo') as string
-    const priority = Number(formData.get('priority') as string)
-    const status = formData.get('status') as TaskStatus
-
-    createTaskMutation.mutate({
-      phaseId,
-      title,
-      description: description || undefined,
-      dueDate: dueDate || undefined,
-      assignedTo: assignedTo || undefined,
-      priority,
-      status,
-    })
-  }
-
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
-    onSubmit(formData)
+    createTaskMutation.mutate({
+      phaseId,
+      title: formData.get('title') as string,
+      description: (formData.get('description') as string) || undefined,
+      dueDate: (formData.get('dueDate') as string) || undefined,
+      assignedTo: (formData.get('assignedTo') as string) || undefined,
+      priority: Number(formData.get('priority') as string),
+      status: formData.get('status') as TaskStatus,
+    })
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button className="w-full scale-75 origin-left" color="pink">
-            <Button.Icon><Plus className="h-4 w-4" /></Button.Icon>
-            <Button.Label>Add Task</Button.Label>
+          <Button variant="secondary" className="w-full">
+            <Plus className="h-4 w-4" />
+            Add Task
           </Button>
         )}
       </DialogTrigger>
@@ -107,7 +104,11 @@ export function NewTaskDialog({
 
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
-            <Input id="description" name="description" placeholder="Task details (optional)" />
+            <Input
+              id="description"
+              name="description"
+              placeholder="Task details (optional)"
+            />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
@@ -130,7 +131,15 @@ export function NewTaskDialog({
             </div>
             <div className="space-y-2">
               <Label htmlFor="priority">Priority</Label>
-              <Input id="priority" name="priority" type="number" min={1} max={5} defaultValue={3} required />
+              <Input
+                id="priority"
+                name="priority"
+                type="number"
+                min={1}
+                max={5}
+                defaultValue={3}
+                required
+              />
             </div>
           </div>
 
@@ -151,9 +160,8 @@ export function NewTaskDialog({
           </div>
 
           <DialogFooter>
-            <Button type="submit" color="cyan" isLoading={createTaskMutation.isPending}>
-              <Button.Spinner />
-              <Button.Label>Create Task</Button.Label>
+            <Button type="submit" isLoading={createTaskMutation.isPending}>
+              Create Task
             </Button>
           </DialogFooter>
         </form>

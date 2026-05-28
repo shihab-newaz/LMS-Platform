@@ -1,20 +1,10 @@
 'use client'
 
 import React from 'react'
-import {
-  BookOpen,
-  Clock,
-  Award,
-  Users,
-  ChevronRight,
-} from 'lucide-react'
+import { BookOpen, Clock, Award, Users, ChevronRight } from 'lucide-react'
 
-import { Button } from '@/components/custom/Button'
-import {
-  Card,
-  CardHeader,
-  CardContent,
-} from '@/components/ui/card'
+import { Button } from '@/components/common/Button'
+import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 
@@ -120,15 +110,15 @@ export default function Homepage() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-2xl font-bold text-foreground">
-              Welcome back, Student! 👋
+              Welcome back, Student!
             </h2>
             <p className="text-muted-foreground mt-1">
-              Continue your Islamic learning journey
+              Continue your learning journey
             </p>
           </div>
-          <Button color="pink" className="scale-90">
-            <Button.Icon><Award className="w-4 h-4" /></Button.Icon>
-            <Button.Label>Certificates</Button.Label>
+          <Button variant="secondary">
+            <Award className="w-4 h-4" />
+            Certificates
           </Button>
         </div>
 
@@ -163,22 +153,18 @@ export default function Homepage() {
       {/* Courses Section */}
       <div>
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-semibold text-foreground">
-            My Courses
-          </h3>
-          <Button color="cyan" className="scale-90">
-            <Button.Label>All Courses</Button.Label>
-          </Button>
+          <h3 className="text-xl font-semibold text-foreground">My Courses</h3>
+          <Button>All Courses</Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {courses.map((course) => (
             <Card
               key={course.id}
-              className="overflow-hidden hover:shadow-lg transition-shadow"
+              className="overflow-hidden hover:border-primary transition-colors"
             >
-              <div className="h-32 bg-linear-to-br from-green-100 to-green-50 flex items-center justify-center">
-                <BookOpen className="w-12 h-12 text-green-600" />
+              <div className="h-32 bg-[#0f1011] flex items-center justify-center border-b border-border">
+                <BookOpen className="w-12 h-12 text-[#27a644]" />
               </div>
 
               <CardContent>
@@ -214,9 +200,7 @@ export default function Homepage() {
                   </div>
                 </div>
 
-                <Button color="cyan" className="w-full mt-4 scale-90 origin-left">
-                  <Button.Label>Continue</Button.Label>
-                </Button>
+                <Button className="w-full mt-4">Continue</Button>
               </CardContent>
             </Card>
           ))}

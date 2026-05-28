@@ -9,7 +9,7 @@
 
 import React from 'react'
 import { useButtonContext } from '../context/ButtonContext'
-import styles from '../css/Button.module.css'
+import styles from '../styles/Button.module.css'
 
 interface ButtonSpinnerProps {
     className?: string

@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Lock, Mail, User } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 
-import { Button } from '@/components/custom/Button'
+import { Button } from '@/components/common/Button'
 import { Input } from '@/components/custom/Input'
 import {
   Form,
@@ -61,9 +61,7 @@ const RegisterForm = () => {
       }
     },
     onError: (error: ApiError) => {
-      toast.error(
-        error.message ?? 'Please review your details and try again.'
-      )
+      toast.error(error.message ?? 'Please review your details and try again.')
     },
   })
 
@@ -158,8 +156,9 @@ const RegisterForm = () => {
           className="w-full"
           isLoading={registerMutation.isPending}
         >
-          <Button.Spinner />
-          <Button.Label>{registerMutation.isPending ? 'Creating account...' : 'Create account'}</Button.Label>
+          {registerMutation.isPending
+            ? 'Creating account...'
+            : 'Create account'}
         </Button>
 
         <p className="text-center text-sm text-muted-foreground">

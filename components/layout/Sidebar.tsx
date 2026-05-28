@@ -76,10 +76,7 @@ export default function AppSidebar() {
   const pathname = usePathname()
 
   return (
-    <Sidebar
-      variant="sidebar"
-      className="shadow-md !bg-gray-800 !dark:bg-gray-800/30"
-    >
+    <Sidebar variant="sidebar" className="!bg-[#0f1011]">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -105,7 +102,8 @@ export default function AppSidebar() {
             <SidebarMenu>
               {navigationItems.map((item) => {
                 const Icon = item.icon
-                const isActive = pathname === item.href || 
+                const isActive =
+                  pathname === item.href ||
                   (item.href === '/' && pathname.startsWith('/dashboard')) ||
                   (item.href !== '/' && pathname.startsWith(item.href))
 

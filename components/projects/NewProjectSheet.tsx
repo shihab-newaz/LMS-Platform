@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/components/custom/Button'
+import { Button } from '@/components/common/Button'
 import {
   Sheet,
   SheetContent,
@@ -24,7 +24,6 @@ import { useCreateProjectMutation } from '@/services'
 import { toast } from 'sonner'
 import type { ProjectStatus } from '@/services'
 
-// Define a type for project phases to replace 'any'
 export function NewProjectSheet() {
   const [open, setOpen] = useState(false)
   const [status, setStatus] = useState<ProjectStatus>('PLANNING')
@@ -41,33 +40,24 @@ export function NewProjectSheet() {
     },
   })
 
-  function onSubmit(formData: FormData) {
-    const name = formData.get('name') as string
-    const description = formData.get('description') as string
-    const startDate = formData.get('startDate') as string
-    const endDate = formData.get('endDate') as string
-
-    createProjectMutation.mutate({
-      name,
-      description: description || undefined,
-      status,
-      startDate: startDate || undefined,
-      endDate: endDate || undefined,
-    })
-  }
-
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
-    onSubmit(formData)
+    createProjectMutation.mutate({
+      name: formData.get('name') as string,
+      description: (formData.get('description') as string) || undefined,
+      status,
+      startDate: (formData.get('startDate') as string) || undefined,
+      endDate: (formData.get('endDate') as string) || undefined,
+    })
   }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button color="cyan">
-          <Button.Icon><Plus className="h-4 w-4" /></Button.Icon>
-          <Button.Label>New Project</Button.Label>
+        <Button>
+          <Plus className="h-4 w-4" />
+          New Project
         </Button>
       </SheetTrigger>
       <SheetContent className="sm:max-w-135">
@@ -110,7 +100,10 @@ export function NewProjectSheet() {
 
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
-            <Select value={status} onValueChange={(value) => setStatus(value as ProjectStatus)}>
+            <Select
+              value={status}
+              onValueChange={(value) => setStatus(value as ProjectStatus)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
@@ -123,9 +116,8 @@ export function NewProjectSheet() {
           </div>
 
           <div className="flex justify-end pt-4">
-            <Button type="submit" color="pink" isLoading={createProjectMutation.isPending}>
-              <Button.Spinner />
-              <Button.Label>Create Project</Button.Label>
+            <Button type="submit" isLoading={createProjectMutation.isPending}>
+              Create Project
             </Button>
           </div>
         </form>

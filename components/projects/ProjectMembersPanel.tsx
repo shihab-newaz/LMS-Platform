@@ -1,18 +1,18 @@
-'use client';
+'use client'
 
-import { useMemo, useState } from 'react';
-import { toast } from 'sonner';
+import { useMemo, useState } from 'react'
+import { toast } from 'sonner'
 
-import { Button } from '@/components/custom/Button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/common/Button'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui/select'
 import {
   useAddProjectMemberMutation,
   useProfileQuery,
@@ -22,112 +22,111 @@ import {
   useUsersQuery,
   type ProjectMember,
   type ProjectMemberRole,
-} from '@/services';
+} from '@/services'
 
-const memberRoles: ProjectMemberRole[] = ['OWNER', 'MEMBER', 'VIEWER'];
+const memberRoles: ProjectMemberRole[] = ['OWNER', 'MEMBER', 'VIEWER']
 
 interface ProjectMembersPanelProps {
-  projectId: string;
+  projectId: string
 }
 
 function displayName(member: ProjectMember) {
-  return member.userName || member.userEmail;
+  return member.userName || member.userEmail
 }
 
 export function ProjectMembersPanel({ projectId }: ProjectMembersPanelProps) {
-  const { data: currentUser } = useProfileQuery();
-  const isAdmin = currentUser?.role === 'ADMIN';
+  const { data: currentUser } = useProfileQuery()
+  const isAdmin = currentUser?.role === 'ADMIN'
 
-  const { data: members = [], isLoading, isError } = useProjectMembersQuery(projectId, Boolean(projectId));
+  const {
+    data: members = [],
+    isLoading,
+    isError,
+  } = useProjectMembersQuery(projectId, Boolean(projectId))
   const { data: usersResponse } = useUsersQuery({
     page: 1,
     limit: 100,
     includeInactive: false,
-  });
+  })
 
-  const [selectedUserId, setSelectedUserId] = useState('');
-  const [selectedRole, setSelectedRole] = useState<ProjectMemberRole>('MEMBER');
+  const [selectedUserId, setSelectedUserId] = useState('')
+  const [selectedRole, setSelectedRole] = useState<ProjectMemberRole>('MEMBER')
 
   const addMemberMutation = useAddProjectMemberMutation({
     onSuccess: () => {
-      setSelectedUserId('');
-      setSelectedRole('MEMBER');
-      toast.success('Project member added.');
+      setSelectedUserId('')
+      setSelectedRole('MEMBER')
+      toast.success('Project member added.')
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : 'Failed to add member.');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to add member.'
+      )
     },
-  });
+  })
 
   const updateMemberRoleMutation = useUpdateProjectMemberRoleMutation({
     onSuccess: () => {
-      toast.success('Member role updated.');
+      toast.success('Member role updated.')
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : 'Failed to update role.');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to update role.'
+      )
     },
-  });
+  })
 
   const removeMemberMutation = useRemoveProjectMemberMutation({
     onSuccess: () => {
-      toast.success('Member removed.');
+      toast.success('Member removed.')
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : 'Failed to remove member.');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to remove member.'
+      )
     },
-  });
+  })
 
-  const users = usersResponse?.data ?? [];
-  const existingUserIds = useMemo(() => new Set(members.map((member) => member.userId)), [members]);
-  const availableUsers = users.filter((user) => !existingUserIds.has(user.id));
+  const users = usersResponse?.data ?? []
+  const existingUserIds = useMemo(
+    () => new Set(members.map((member) => member.userId)),
+    [members]
+  )
+  const availableUsers = users.filter((user) => !existingUserIds.has(user.id))
 
   const addMember = () => {
     if (!selectedUserId) {
-      toast.error('Select a user first.');
-      return;
+      toast.error('Select a user first.')
+      return
     }
-
     addMemberMutation.mutate({
       projectId,
       userId: selectedUserId,
       role: selectedRole,
-    });
-  };
+    })
+  }
 
   const changeRole = (member: ProjectMember, role: ProjectMemberRole) => {
-    if (!isAdmin || role === member.role) {
-      return;
-    }
-
-    updateMemberRoleMutation.mutate({
-      projectId,
-      memberId: member.id,
-      role,
-    });
-  };
+    if (!isAdmin || role === member.role) return
+    updateMemberRoleMutation.mutate({ projectId, memberId: member.id, role })
+  }
 
   const removeMember = (member: ProjectMember) => {
-    if (!isAdmin) {
-      return;
-    }
-
-    const confirmed = window.confirm(`Remove ${displayName(member)} from this project?`);
-    if (!confirmed) {
-      return;
-    }
-
-    removeMemberMutation.mutate({
-      projectId,
-      memberId: member.id,
-    });
-  };
+    if (!isAdmin) return
+    const confirmed = window.confirm(
+      `Remove ${displayName(member)} from this project?`
+    )
+    if (!confirmed) return
+    removeMemberMutation.mutate({ projectId, memberId: member.id })
+  }
 
   return (
     <Card>
       <CardHeader className="space-y-2">
         <CardTitle>Team Members</CardTitle>
         <p className="text-sm text-muted-foreground">
-          Assign project collaborators and manage their project-level permissions.
+          Assign project collaborators and manage their project-level
+          permissions.
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -147,7 +146,12 @@ export function ProjectMembersPanel({ projectId }: ProjectMembersPanelProps) {
             </Select>
 
             <div className="flex gap-2">
-              <Select value={selectedRole} onValueChange={(value) => setSelectedRole(value as ProjectMemberRole)}>
+              <Select
+                value={selectedRole}
+                onValueChange={(value) =>
+                  setSelectedRole(value as ProjectMemberRole)
+                }
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
@@ -160,20 +164,29 @@ export function ProjectMembersPanel({ projectId }: ProjectMembersPanelProps) {
                 </SelectContent>
               </Select>
 
-              <Button color="cyan" size="sm" isLoading={addMemberMutation.isPending} onClick={addMember}>
-                <Button.Spinner />
-                <Button.Label>Add</Button.Label>
+              <Button
+                size="sm"
+                isLoading={addMemberMutation.isPending}
+                onClick={addMember}
+              >
+                Add
               </Button>
             </div>
           </div>
         )}
 
         {isLoading ? (
-          <div className="text-sm text-muted-foreground">Loading members...</div>
+          <div className="text-sm text-muted-foreground">
+            Loading members...
+          </div>
         ) : isError ? (
-          <div className="text-sm text-destructive">Failed to load members.</div>
+          <div className="text-sm text-destructive">
+            Failed to load members.
+          </div>
         ) : members.length === 0 ? (
-          <div className="text-sm text-muted-foreground">No members assigned yet.</div>
+          <div className="text-sm text-muted-foreground">
+            No members assigned yet.
+          </div>
         ) : (
           <div className="space-y-2">
             {members.map((member) => (
@@ -183,14 +196,18 @@ export function ProjectMembersPanel({ projectId }: ProjectMembersPanelProps) {
               >
                 <div className="space-y-1">
                   <p className="text-sm font-medium">{displayName(member)}</p>
-                  <p className="text-xs text-muted-foreground">{member.userEmail}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {member.userEmail}
+                  </p>
                 </div>
 
                 <div className="flex items-center gap-2">
                   {isAdmin ? (
                     <Select
                       value={member.role}
-                      onValueChange={(value) => changeRole(member, value as ProjectMemberRole)}
+                      onValueChange={(value) =>
+                        changeRole(member, value as ProjectMemberRole)
+                      }
                     >
                       <SelectTrigger className="w-32">
                         <SelectValue />
@@ -209,14 +226,12 @@ export function ProjectMembersPanel({ projectId }: ProjectMembersPanelProps) {
 
                   {isAdmin && (
                     <Button
-                      color="pink"
-                      variant="ghost"
+                      variant="destructive"
                       size="sm"
                       isLoading={removeMemberMutation.isPending}
                       onClick={() => removeMember(member)}
                     >
-                      <Button.Spinner />
-                      <Button.Label>Remove</Button.Label>
+                      Remove
                     </Button>
                   )}
                 </div>
@@ -226,5 +241,5 @@ export function ProjectMembersPanel({ projectId }: ProjectMembersPanelProps) {
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

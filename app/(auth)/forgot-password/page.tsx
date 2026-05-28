@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 
-import { Button } from '@/components/custom/Button'
+import { Button } from '@/components/common/Button'
 
 const ForgotPasswordPage = () => {
   const router = useRouter()
@@ -19,9 +19,9 @@ const ForgotPasswordPage = () => {
           administrator for immediate support.
         </p>
       </div>
-      <Button onClick={() => router.push('/login')} color="pink">
-        <Button.Icon><ArrowLeft className="h-4 w-4" /></Button.Icon>
-        <Button.Label>Back to sign in</Button.Label>
+      <Button variant="secondary" onClick={() => router.push('/login')}>
+        <ArrowLeft className="h-4 w-4" />
+        Back to sign in
       </Button>
     </div>
   )

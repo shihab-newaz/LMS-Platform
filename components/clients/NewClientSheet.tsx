@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import { Button } from '@/components/custom/Button';
+import { Button } from '@/components/common/Button'
 import {
   Sheet,
   SheetContent,
@@ -8,55 +8,46 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Plus } from 'lucide-react';
-import { useState, type FormEvent } from 'react';
-import { useCreateClientMutation } from '@/services';
-import { toast } from 'sonner';
+} from '@/components/ui/sheet'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Plus } from 'lucide-react'
+import { useState, type FormEvent } from 'react'
+import { useCreateClientMutation } from '@/services'
+import { toast } from 'sonner'
 
 export function NewClientSheet() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
   const createClientMutation = useCreateClientMutation({
     onSuccess: () => {
-      setOpen(false);
-      toast.success('Client added successfully');
+      setOpen(false)
+      toast.success('Client added successfully')
     },
     onError: (error) => {
       toast.error(
         'Failed to add client' +
           (error instanceof Error ? `: ${error.message}` : '.')
-      );
+      )
     },
-  });
-
-  function onSubmit(formData: FormData) {
-    const name = formData.get('name') as string;
-    const email = formData.get('email') as string;
-    const phone = formData.get('phone') as string;
-    const company = formData.get('company') as string;
-
-    createClientMutation.mutate({
-      name,
-      email,
-      phone,
-      company,
-    });
-  }
+  })
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    onSubmit(formData);
-  };
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    createClientMutation.mutate({
+      name: formData.get('name') as string,
+      email: formData.get('email') as string,
+      phone: formData.get('phone') as string,
+      company: formData.get('company') as string,
+    })
+  }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button color="cyan">
-          <Button.Icon><Plus className="h-4 w-4" /></Button.Icon>
-          <Button.Label>Add Client</Button.Label>
+        <Button>
+          <Plus className="h-4 w-4" />
+          Add Client
         </Button>
       </SheetTrigger>
       <SheetContent className="sm:max-w-[540px]">
@@ -69,12 +60,23 @@ export function NewClientSheet() {
         <form onSubmit={handleSubmit} className="space-y-6 mt-8">
           <div className="space-y-2">
             <Label htmlFor="name">Full Name</Label>
-            <Input id="name" name="name" placeholder="e.g. Alice Johnson" required />
+            <Input
+              id="name"
+              name="name"
+              placeholder="e.g. Alice Johnson"
+              required
+            />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="email">Email Address</Label>
-            <Input id="email" name="email" type="email" placeholder="alice@example.com" required />
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="alice@example.com"
+              required
+            />
           </div>
 
           <div className="space-y-2">
@@ -88,13 +90,12 @@ export function NewClientSheet() {
           </div>
 
           <div className="flex justify-end pt-4">
-            <Button type="submit" color="pink" isLoading={createClientMutation.isPending}>
-              <Button.Spinner />
-              <Button.Label>Add Client</Button.Label>
+            <Button type="submit" isLoading={createClientMutation.isPending}>
+              Add Client
             </Button>
           </div>
         </form>
       </SheetContent>
     </Sheet>
-  );
+  )
 }

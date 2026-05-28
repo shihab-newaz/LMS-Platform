@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Lock, Mail } from 'lucide-react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 
-import { Button } from '@/components/custom/Button'
+import { Button } from '@/components/common/Button'
 import { Input } from '@/components/custom/Input'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -41,19 +41,14 @@ const LoginForm = () => {
 
   const loginMutation = useLoginMutation({
     onSuccess: (response: AuthResponse, variables: LoginPayload) => {
-      // Persist the token if provided
       const accessToken = response.tokens?.accessToken
       const refreshToken = response.tokens?.refreshToken
 
       if (accessToken && refreshToken) {
-        const maxAge = variables.rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24 * 7 // 30 days if remember me, otherwise 7 days
-        persistClientAuthTokens(
-          {
-            accessToken,
-            refreshToken,
-          },
-          maxAge
-        )
+        const maxAge = variables.rememberMe
+          ? 60 * 60 * 24 * 30
+          : 60 * 60 * 24 * 7
+        persistClientAuthTokens({ accessToken, refreshToken }, maxAge)
       } else if (accessToken) {
         persistClientToken(accessToken)
       }
@@ -78,13 +73,11 @@ const LoginForm = () => {
   })
 
   const onSubmit: SubmitHandler<LoginFormValues> = (values) => {
-    const payload: LoginPayload = {
+    loginMutation.mutate({
       email: values.email,
       password: values.password,
       rememberMe: values.rememberMe,
-    }
-
-    loginMutation.mutate(payload)
+    })
   }
 
   return (
@@ -167,8 +160,7 @@ const LoginForm = () => {
           className="w-full"
           isLoading={loginMutation.isPending}
         >
-          <Button.Spinner />
-          <Button.Label>{loginMutation.isPending ? 'Signing in...' : 'Sign in'}</Button.Label>
+          {loginMutation.isPending ? 'Signing in...' : 'Sign in'}
         </Button>
 
         <p className="text-center text-sm text-muted-foreground">
