@@ -2,12 +2,6 @@ import type { Metadata } from 'next'
 import { Inter, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import ClientProviders from '../components/providers/ClientProviders'
-import { initMSW } from '../lib/msw'
-
-// Initialize MSW before React starts (development only)
-if (typeof window !== 'undefined') {
-  initMSW()
-}
 
 const inter = Inter({
   variable: '--font-sans',

@@ -6,7 +6,10 @@ import {
   persistClientAuthTokens,
 } from '@/lib/auth-token'
 
-const configuredApiBaseUrl = (process.env.NEXT_PUBLIC_API_URL ?? '').replace(/\/$/, '')
+const configuredApiBaseUrl = (process.env.NEXT_PUBLIC_API_URL ?? '').replace(
+  /\/$/,
+  ''
+)
 const API_BASE_URL =
   configuredApiBaseUrl ||
   (process.env.NODE_ENV === 'development' ? '' : 'http://localhost:3333')
@@ -134,10 +137,11 @@ const resolveResponse = async <T>(response: Response): Promise<T> => {
   if (!response.ok) {
     let payload: unknown = null
 
+    const text = await response.text()
     try {
-      payload = await response.json()
+      payload = JSON.parse(text)
     } catch {
-      payload = await response.text()
+      payload = text
     }
 
     const message =
@@ -173,7 +177,11 @@ const resolveResponseOrRefresh = async <TResponse>(
     skipAuthRefresh?: boolean
   }
 ): Promise<TResponse> => {
-  if (response.status === 401 && request.requiresAuth && !request.skipAuthRefresh) {
+  if (
+    response.status === 401 &&
+    request.requiresAuth &&
+    !request.skipAuthRefresh
+  ) {
     const refreshed = await refreshSession()
     if (refreshed) {
       const retryHeaders = new Headers(request.init.headers)
@@ -200,7 +208,13 @@ const resolveResponseOrRefresh = async <TResponse>(
 
 const apiFetch = async <TResponse, TBody = unknown>(
   path: string,
-  { json, requiresAuth = false, headers, skipAuthRefresh, ...init }: ApiRequestConfig<TBody> = {}
+  {
+    json,
+    requiresAuth = false,
+    headers,
+    skipAuthRefresh,
+    ...init
+  }: ApiRequestConfig<TBody> = {}
 ): Promise<TResponse> => {
   const resolvedHeaders = new Headers(headers)
 
